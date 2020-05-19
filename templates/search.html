@@ -1,0 +1,77 @@
+{% extends  'base_foot.html' %}
+{% block content %}
+    <div class="clearfix">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="seach_inp">
+                    <input type="search" class="form-control " placeholder="书名 / 作者 / 分类 / ISBN" autofocus="autofocus">
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="search_books clearfix">
+
+    </div>
+
+    <script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8">
+
+    </script>
+    <script type="text/javascript">
+
+
+        $('.seach_inp>input').bind('input propertychange', function(){
+            if($(this).val()){
+                console.log($(this).val());
+
+                $.ajax({
+                    url:'',
+                    type:"post",
+                    data:{
+                        'search_text' : $(this).val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success:function(data){
+                        if(data.data){
+                            var dic = JSON.parse(data.data);
+                            for(var ele in dic){
+                                $('.search_books').append(
+                                    `<div class="clearfix book_ref thumbnail" id=`+dic[ele].pk+`>
+                                        <a href="/book_detail/`+dic[ele].pk+`" class="clearfix">
+                                            <div class="pull-left">
+                                                <img src="/media/book_imgs/baoyu.jpeg">
+                                            </div>
+                                            <div class="pull-left">
+                                                <p>`+dic[ele]['fields']['title']+`</p>
+                                                <p>`+dic[ele]['fields']['author']+`</p>
+                                                <p><span>¥&nbsp;</span>`+dic[ele]['fields']['price']+`</p>
+                                            </div>
+                                            <div class="pull-right">
+                                                <button type="button" class="btn btn-warning">加入购物车</button>
+                                            </div>
+                                        </a>
+                                    </div>`
+                                )
+                            }
+                        }else {
+
+                            {#$('.search_books').append(`<div><span class="glyphicon glyphicon-tint"></span></div>#}
+                            console.log("nothing find")
+
+                        }
+                    }
+                })
+
+
+            }else{
+                console.log("xxxxxxxx");
+            }
+        });
+
+
+
+
+    </script>
+
+
+{% endblock %}
+

@@ -1,0 +1,73 @@
+{% extends 'base_foot.html' %}
+{% block content %}
+    <div class="sell_book">
+
+        <ul class="nav nav-tabs nav-justified">
+            <li role="presentation"><a href="/sell_book/">我要卖书</a></li>
+            <li role="presentation" class="active" ><a href="#">我的售中书籍({{ books.count }})</a></li>
+        </ul>
+        <div class="sell_books">
+            {% for book in books %}
+                <div class="clearfix book_sell_in" id="{{ book.pk }}">
+                    <div class="pull-left">
+
+
+                        <a href="/book_detail/{{ book.pk }}" class="clearfix first">
+                                <div class="pull-left thumbnail">
+                                    <img src="media/{{ book.img }}">
+                                </div>
+                                <div class="pull-left">
+                                    <p>书名 ：《{{ book.title }}》</p>
+                                    <p>价格 ：<span>¥&nbsp</span>{{ book.price }}</p>
+                                </div>
+                        </a>
+                    </div>
+                    <div class="pull-right edit_sell_book clearfix">
+                        <a  href="/sell_in_edit/{{ book.pk }}" class="edit btn btn-success"><span class="glyphicon glyphicon-pencil">&nbsp</span>编辑</a>
+                        <a id="{{ book.pk }}" class="delete btn btn-warning">
+                            <span class="glyphicon glyphicon-trash">&nbsp</span>删除
+                        </a>
+
+
+                    </div>
+                </div>
+                <hr>
+
+            {% endfor %}
+
+
+
+
+            <!-- 按钮触发模态框 -->
+            <!-- 模态框（Modal） -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"></h4>
+                        </div>
+                        <div class="modal-body">你确定要下架吗？</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-danger">确定</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal -->
+            </div>
+
+
+            <div class="search_books"></div>
+        </div>
+
+
+        <!-- Small modal -->
+
+
+    </div>
+    <div class="search_books"></div>
+
+
+{% endblock %}

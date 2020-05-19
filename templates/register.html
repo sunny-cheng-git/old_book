@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+
+    <title>注册页面</title>
+
+</head>
+<body>
+<div class="login row">
+    <div class="col-md-6 col-md-offset-3">
+        <h2>注册页面</h2>
+        <hr>
+        <form method="post" class="regist" novalidate>
+            {% csrf_token %}
+                {% for field in form %}
+                    <div class="input-group input-group-lg" style="margin-top: 30px">
+                        <span class="input-group-addon" id="sizing-addon1">{{ field.label }}</span>
+                        {{ field }}
+                    </div>
+                    <span class="login_error pull-right" style="color: red">
+                          {% if field.label == '账号' %}
+                              <span>{{ clean_error.0 }}</span>
+                          {% endif %}
+                        {{ field.errors.0 }}
+                    </span>
+                {% endfor %}
+
+            <div class="btn success pull-right">
+                <input type="submit" name="publish" class="form-control" required="" id="id_publish">
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+</body>
+<script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+    $('.btn').click(function () {
+        $('.login_error').remove()
+    })
+
+
+</script>
+</html>

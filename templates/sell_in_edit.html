@@ -1,0 +1,126 @@
+{% extends 'base_foot.html' %}
+{% block content %}
+    <div class="edit_book">
+        <div>
+            <form id="form" novalidate="">
+                {% csrf_token %}
+
+                <div class="input-group input-group-lg">
+                    <label class="input-group-addon" id="sizing-addon1">书名</label>
+                    <input type="None" name="title" class="form-control input-group input-group-lg" maxlength="32" value="{{ book_obj.title }}" required="" id="id_title">
+                </div>
+                <span class="login_error pull-right" style="color: red">
+
+
+                    </span>
+
+
+                <div class="input-group input-group-lg">
+                    <label class="input-group-addon" id="sizing-addon1">价格</label>
+                    <input type="None" name="price" class="form-control" value="{{ book_obj.price }}" required="" id="id_price">
+                </div>
+                <span class="login_error pull-right" style="color: red">
+
+
+                    </span>
+
+
+                <div class="input-group input-group-lg">
+                    <label class="input-group-addon" id="sizing-addon1">作者</label>
+                    <input type="None" name="author" class="form-control" value="{{ book_obj.author }}" required="" id="id_author">
+                </div>
+                <span class="login_error pull-right" style="color: red">
+
+
+                    </span>
+
+
+                <div class="input-group input-group-lg">
+                    <label class="input-group-addon" id="sizing-addon1">出版社</label>
+                    <input type="None" name="publish" class="form-control" value="{{ book_obj.publish }}"  required="" id="id_publish">
+                </div>
+                <span class="login_error pull-right" style="color: red">
+
+
+                    </span>
+
+
+                <div class="input-group input-group-lg">
+                    <label class="input-group-addon" id="sizing-addon1">简介</label>
+                    <input type="None" name="brief" class="form-control" value="{{ book_obj.brief }}" required="" id="id_brief">
+                </div>
+                <span class="login_error pull-right" style="color: red">
+
+
+                    </span>
+
+
+                <div class="input-group input-group-lg">
+                    <label class="input-group-addon" id="sizing-addon1">出版时间</label>
+                    <input type="date" name="pub_time" class="form-control"  value="{{ book_obj.pub_time | date:'Y-m-d'  }}" required="" id="id_pub_time">
+                </div>
+                <span class="login_error pull-right" style="color: red">
+
+
+                    </span>
+
+
+
+                <div class="form-group">
+                    <label for="img">
+                        <p>&gt;添加书籍封面</p>
+                        <img id="avatar_img" width="100" src="media/{{book_obj.img}}">
+                    </label>
+                    <input type="file" id="img" name="book_img" style="display: none">
+                </div>
+
+            </form>
+            <input type="submit" value="上架" class="edit_btn sub_btn form-control">
+            <div class="search_books"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/bs/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $('.sub_btn').click(function () {
+
+            var formdata = new FormData();//文件传输对象
+            var request_data = $("#form").serializeArray();
+            $.each(request_data, function (index, data) {
+                formdata.append(data.name, data.value)
+            });
+            {#    这里是从管道取数据 。#}
+            formdata.append("book_img", $("#img")[0].files[0]);
+            console.log( $("#img")[0].files[0]);
+
+
+            formdata.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+            {#console.log($("#img")[0].files[0]);#}
+            $.ajax({
+                url: '',
+                method: 'post',
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (data) {
+                    console.log(data);
+                    if (data.title) {
+                        {#location.href = '/sell_in/'#}
+                        console.log(data.title)
+                    } else {
+                        {#console.log(data.msg);#}
+                        $.each(data.msg, function (field, error_list) {
+                            $('#id_' + field).parent().next().html(error_list[0]);  //next同胞标签
+                        })
+                    }
+                }
+            })
+        });
+
+
+
+    </script>
+
+{% endblock %}

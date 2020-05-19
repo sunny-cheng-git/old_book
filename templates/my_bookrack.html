@@ -1,0 +1,37 @@
+{% extends 'my_zone.html' %}
+{% block zone %}
+    <div id='zone_type' class="my_bookrack">
+        <div class="rack_list"></div>
+        {% for order in order_list %}
+            <div class="rack ">
+                <div class="book-r clearfix">
+                    <a href="book_detail/{{ order.book.sid }}">
+                        <div class="clearfix">
+                            <img class="pull-left" src="media/{{ order.book.img }}">
+                            <div  class="pull-left">
+                                <p style="font-size: 15px">{{ order.book.title }}</p>
+                                <p style="padding-left: 20px">{{ order.book.author }}</p>
+                                <p class="score" style="padding-left: 20px">
+                                    <object>
+                                        <a href="/appraise/{{ order.book.sid }}">
+                                            <span class="glyphicon glyphicon-star-empty"></span>评分
+                                        </a>
+                                    </object>
+                                </p>
+                            </div>
+                            <div class="seller pull-right">
+                                <p>{{ order.book.user }}</p>
+                            </div>
+                        </div>
+
+                    </a>
+
+
+                </div>
+            </div>
+
+            <hr>
+        {% endfor %}
+    </div>
+
+{% endblock %}

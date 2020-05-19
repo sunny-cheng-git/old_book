@@ -1,0 +1,40 @@
+{% extends 'base_foot.html' %}
+{% block content %}
+    <div class="sell_book">
+        <h2>修改书籍</h2>
+        <div>
+            <form id="form" method="post" novalidate>
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="input-group input-group-lg">
+                        <label class="input-group-addon" id="sizing-addon1">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                    <span class="login_error pull-right" style="color: red">
+                          {% if field.label == '账号' %}
+                              <span>{{ clean_error.0 }}</span>
+                          {% endif %}
+                        {{ field.errors.0 }}
+                    </span>
+
+                {% endfor %}
+
+                <div class="form-group">
+                    <label for="img">
+                        <p>>添加书籍封面</p>
+                        <img id="avatar_img" width="100"
+                             src="media/{{ book_obj.img }}"/>
+                    </label>
+                    <input type="file" id="img" name="book_img" style="display: none">
+                </div>
+                <input type="submit" value="上架" class="sub_btn11 form-control">
+            </form>
+
+            <div class="search_books"></div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

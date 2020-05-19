@@ -1,0 +1,86 @@
+{% extends  'base_foot.html' %}
+{% block content %}
+
+    <div class="book_cate">
+        <ul class="list-group ">
+            {% csrf_token %}
+            <h2>所有书籍分类</h2>
+            <hr>
+            {% for cate in category %}
+                <li id="{{ cate.cid }}" class="list-group-item">
+                    {{ cate.title }}
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+    <div class="recommend">
+            <hr>
+        <h2></h2>
+        <hr>
+
+        <div class="book_list">
+        </div>
+    </div>
+
+
+
+    <script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+
+        function book_info(pk,img,title,author,price){
+            return `<div class="clearfix book_title">
+                <a href="/book_detail/`+pk+`" class="clearfix ">
+                    <div class="pull-left thumbnail">
+                        <img src="media/`+img+`">
+                    </div>
+                    <div class="pull-left">
+                        <p>`+title+`</p>
+                        <p>`+author+`</p>
+                        <p><span>¥&nbsp</span>`+price+`</p>
+                    </div>
+                </a>
+            </div>`;
+        }
+
+
+
+
+        $('.book_cate>ul>li').click(function () {
+           var category_id = $(this).attr('id');
+            var recommend_type = $(this).text();
+            $('.recommend>h2').text(recommend_type);
+            $('.recommend').show();
+                $.ajax({
+                    url:'',
+                    method:'post',
+                    data:{
+                        "category_id":category_id,
+                        "csrfmiddlewaretoken":"{{ csrf_token }}"
+                    },
+                    success:function (data) {
+                        $('.book_list').children().remove();
+                        if(data.title){
+                            console.log('title',data.title);
+                            for(var i in data.title){
+                                var pk = data.title[i].pk;
+                                console.log(pk);
+                                var dic = data.title[i].fields;
+                                console.log(dic['title']);
+                                $('.book_list').append(
+                                    book_info(pk,img=dic['img'],dic['title'],dic['author'],dic['price'])
+                                )
+
+                            }
+                        }else {
+                            console.log('msg',data.msg)
+                        }
+                    }
+                })
+        });
+
+
+
+
+    </script>
+{% endblock %}

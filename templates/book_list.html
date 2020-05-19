@@ -1,0 +1,22 @@
+{% extends  'home.html' %}
+{% block book_list %}
+    <div class="book_list">
+
+        {% for book in books %}
+            <div class="clearfix book_title">
+                <a href="/book_detail/{{ book.pk }}" class="clearfix ">
+                    <div class="pull-left thumbnail">
+                        <img src="media/{{ book.img }}">
+                    </div>
+                    <div class="pull-left">
+                        <p>{{ book.title }}</p>
+                        <p>{{ book.author }}</p>
+                        <p><span>¥&nbsp</span>{{ book.price }}</p>
+                    </div>
+                </a>
+            </div>
+
+        {% endfor %}
+    </div>
+
+{% endblock book_list%}

@@ -1,0 +1,179 @@
+{% load staticfiles %}
+{% load my_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+<link rel="stylesheet" href="{% static 'css/old_book.css' %} "/>
+<body>
+<div class="row">
+    <div class="cont col-md-6 col-md-offset-3">
+
+        <div class="detail">
+            <div class="detail_img thumbnail">
+                <img src="/media/{{ book.img }}">
+            </div>
+            <div class="detail_content">
+                <h2>{{ book.title }}</h2>
+                <hr>
+                <p>价格：{{ book.price }}</p>
+                <p>品相：良好</p>
+                <p>作者：{{ book.author }}</p>
+                <p>出版社：{{ book.publish }}</p>
+            </div>
+            <div class="detail_score">
+                <hr>
+                <p>综合评分：＊＊＊＊＊</p>
+                <hr>
+            </div>
+            <div class="detail_brief">
+                <h2>图书简介</h2>
+                <hr>
+                <p>{{ book.brief }}</p>
+            </div>
+            <div>
+                <h2>评论</h2>
+                <div>
+                    {% for com in comment_list %}
+                        {% if not com.parent_comment %}
+
+                            <div class="book_detail"  comment="{{ com.cid }}">
+                                <p>
+                                    <span>{{ com.user }}</span>
+                                    {% if com.score %}
+                                        <span>{% star_numb com.score %} </span>
+                                    {% endif %}
+                                </p>
+                                <p> -- {{ com.content }}</p>
+                                <div id="{{ com.pk }}">
+                                    <a href="/comment_reply/{{ book.pk }}/{{ com.pk }}"><img src='/static/img/comment_write.png'></a>
+                                    <a class="diggit"><img src='/static/img/diggit.png'><span>{{ com.up_count }}</span></a>
+                                    <a class="ch_comt_btn"><img src='/static/img/comment_load.png'></a>
+                                </div>
+                                <hr>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="ship_car" class="foot col-md-6 col-md-offset-3 navbar navbar-default navbar-fixed-bottom">
+            <ul>
+                <li>
+                    <a href="/home/" class="home">
+                        <span class="glyphicon glyphicon-home"></span>
+                        <p>首页</p>
+                    </a>
+                </li>
+                <li class="pull-right">
+                    <a href="/shipping_car/{{ book.pk }}" class="btn btn-warning car">
+                        加入购物车
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div style="height: 100px"></div>
+
+    </div>
+
+
+
+</body>
+<script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+    $('.diggit').click(function () {
+        comment_id = $(this).parent().attr('id');
+        $.ajax({
+            url:'/diggit/',
+            method:'post',
+            data:{
+                "comment_id":comment_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            success:function (data) {
+                if(data.title){
+                    $('#'+comment_id+'>.diggit').children('span').text(data.title)
+                }else {
+                    console.log('msg',data.msg)
+                }
+            }
+        })
+    });
+
+    function add_comment_child(user,date,content){
+        var st = `
+                         <div  class="child_comt">
+                            <p>
+                                <span>${user}</span>
+                                <span>${date}</span>
+                            </p>
+                            <p>
+                                <span>${content}</span>
+                            </p>
+
+                        </div>
+                        <hr>
+
+
+                        `;
+        return st
+    }
+
+    function child_title(len,child){
+        var plate = `<div class='comment_reply'>
+                        <p>有${len}条留言</p>
+                        ${child}
+                        <div >
+                            <hr class="hrLine" style="width:45%;"/>  <span class='comt_close'>收起评论</span>  <hr class="hrLine" style="width:45%;"/>
+                        </div>
+                    </div>`;
+        return plate
+    }
+
+
+
+    $('.ch_comt_btn').click(function () {
+        var parent_comt = $(this).parent().attr('id');
+        $('.comment_reply').remove();
+        $.ajax({
+            url: "",
+            method: "post",
+            data :{
+                'parent_comt':parent_comt,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+        success:function (data) {
+                console.log('data',data);
+                if(data){
+                    var i = 0;
+                    var plate = '';
+                    while (i<data.length){
+                        plate += add_comment_child(data[i][2],data[i][1],data[i][0]);
+                        i+=1;
+                    }
+
+                    $('#'+parent_comt).parent().append(child_title(data.length,plate))
+                }
+        }
+        })
+    });
+
+
+        $('.book_detail').on('click','.comt_close', function () {
+           $(this).parent().parent().remove();
+        })
+
+
+
+
+</script>
+</html>

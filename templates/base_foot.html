@@ -1,0 +1,196 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+<link rel="stylesheet" href="{% static 'css/old_book.css' %} "/>
+<body>
+<div class="row">
+    <div class="cont col-md-6 col-md-offset-3">
+
+        {% block content %}
+
+        {% endblock content %}
+
+
+
+        <div class="foot col-md-6 col-md-offset-3 navbar navbar-default navbar-fixed-bottom">
+            <ul>
+                <li>
+                    <a href="/home/" class="home">
+                        <span class="glyphicon glyphicon-home"></span>
+                        <p>首页</p>
+                    </a>
+                </li>
+                <li><a href="/sell_book/" class="sell_book sell_in"><span class="glyphicon glyphicon-book"></span>
+                    <p>卖书</p></a></li>
+                <li><a href="/shop_car/" class="shop_car"><span class="glyphicon glyphicon-shopping-cart"></span>
+                    <p>购物车</p></a></li>
+                <li>
+{#                                {{ request.user.pk }}#}
+
+                    {% if request.user.pk %}
+                        <a href="/my_zone/">
+                            <span class="glyphicon glyphicon-user"></span>
+                            <p>个人中心</p>
+                        </a>
+                    {% else %}
+                        <a class="login_user" href="/login/">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                            <p>登录账号</p>
+                        </a>
+                    {% endif %}
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/bs/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+    function get_bgc() {
+        var bgcolor=[
+            '#D24D57','#26A65B','#EB7347','#2C3E50','#84AF9B','#FC9D99','#AEDD81' ,'#00CCFF' ,'#D0D0D0'
+        ];
+        var num = Math.round(Math.random()*(bgcolor.length));
+
+        return bgcolor[num]
+    }
+
+
+    window.onload = function () {
+        var numbs = $('.recommend_cate>ul>li');
+        for(var li_ele in numbs){
+        $('.recommend_cate>ul>li:eq('+li_ele+')').css('background-color',get_bgc())
+        }
+
+        {#底部栏添加active#}
+        url = location.href.split('/');
+        {#console.log(url);#}
+        {#console.log(url[3]);#}
+        $('.'+url[3]).addClass('home_active');
+
+
+        {#书籍分类#}
+        var cates = $('.book_cate>ul>li');
+        for(ele in cates) {
+            var colors = [
+                'list-group-item-success','list-group-item-info',
+                'list-group-item-warning','list-group-item-danger'
+            ];
+            {#console.log(typeof  colors.length);#}
+            {#以数组长度产生随机数#}
+            num = Math.round(Math.random()*(colors.length));
+
+            $('.book_cate>ul>li:eq('+ele+')').addClass(colors[num])
+        }
+    };
+
+
+
+        $("#img").change(function () {
+            {#alert('dd');#}
+            // 获取用户选中的文件对象
+            var file_obj = $(this)[0].files[0];
+            // 获取文件对象的路径
+
+            var reader = new FileReader();
+            reader.readAsDataURL(file_obj);
+            console.log('reader.result',reader.result);
+            // 修改img的src属性 ，src=文件对象的路径
+            reader.onload = function () {
+                $("#avatar_img").attr("src", reader.result)
+            };
+        });
+
+    $('.sub_btn').click(function () {
+
+        var formdata = new FormData();//文件传输对象
+        var request_data = $("#form").serializeArray();
+        $.each(request_data, function (index, data) {
+            formdata.append(data.name, data.value)
+        });
+        {#    这里是从管道取数据 。#}
+        formdata.append("book_img", $("#img")[0].files[0]);
+
+
+
+        formdata.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+        {#console.log($("#img")[0].files[0]);#}
+        $.ajax({
+            url: '',
+            method: 'post',
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                console.log(data);
+                if (data.title) {
+                    location.href = '/sell_in/';
+                    console.log(data.title)
+                } else {
+                    {#console.log(data.msg);#}
+                    $.each(data.msg, function (field, error_list) {
+                        $('#id_' + field).parent().next().html(error_list[0]);  //next同胞标签
+                    })
+                }
+            }
+        })
+    });
+
+
+        //通过jquery控制模态框弹出
+    $(function(){
+        //通过jquery控制模态框弹出
+        $('.delete').click(function(){
+            edit_id = $(this).attr('id');
+            title_book = $('#'+edit_id+' p:nth-child(2)').text();
+            console.log('edit_id',edit_id);
+            console.log('edit_id11',{{book.pk}});
+
+            edit_book = $('.first>div>p:nth-child(2)').text();
+            $('#myModalLabel').text('是否下架'+title_book);
+            $('.modal-footer>button').attr('id',edit_id);
+
+            $('#myModal').modal({
+                {#模态框#}
+                keyboard:false
+            });
+
+
+        $('.modal-footer>button').click(function(){
+            console.log('ds',$(this).attr('id'));
+            book_id = $(this).attr('id');
+            if($(this).text()=='确定'){
+                location.href = '/sell_in_del/'+book_id
+            }
+            if($(this).text()=='关闭'){
+                location.href = '/sell_in'
+            }
+
+
+        });
+        });
+
+
+    })
+
+
+
+
+</script>
+
+
+</html>

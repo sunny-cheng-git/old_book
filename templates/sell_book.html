@@ -1,0 +1,36 @@
+{% extends 'base_foot.html' %}
+{% block content %}
+    <div class="sell_book">
+        <ul class="nav nav-tabs nav-justified">
+            <li role="presentation" class="active"><a href="#">我要卖书</a></li>
+            <li role="presentation" ><a href="/sell_in/">我的售中书籍</a></li>
+        </ul>
+        <div>
+        <form id="form" novalidate>
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="input-group input-group-lg">
+                        <label class="input-group-addon" id="sizing-addon1">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                    <span class="error pull-right has-error"></span>
+                {% endfor %}
+
+                <div class="form-group">
+                    <label for="img">
+                        <p>>添加书籍封面</p>
+                        <img id="avatar_img" width="100"
+                             src="/static/book_imgs/defualt_book_img/book_default.jpeg"/>
+                    </label>
+                    <input type="file" id="img" name="book_img" style="display: none">
+                </div>
+        </form>
+            <input type="submit" value="上架" class="sub_btn form-control">
+
+            <div class="search_books"></div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+<link rel="stylesheet" href="{% static 'css/old_book.css' %} "/>
+<body>
+<div class="row">
+    <div class="cont col-md-6 col-md-offset-3">
+
+        {% if books %}
+            <hr>
+                <h2>购物车结算中心</h2>
+            <hr>
+
+            {% for book in books %}
+                <div class="clearfix shop_car car" id="{{ book.pk }}">
+                    <div class="pull-left">
+                        <span id="1" class="glyphicon glyphicon-ok" style="color: gainsboro;"></span>
+                    </div>
+                    <div class="shipcar_ch pull-left ">
+                        <a href="/book_detail/{{ book.book.pk }}" class="clearfix first">
+                            <div class="pull-left thumbnail">
+                                <img src="media/{{ book.book.img }}"/>
+                            </div>
+                            <div class="pull-left ">
+                                <p>书名 ：《{{ book.book.title }}》</p>
+                                <p>价格 ：<span>¥&nbsp</span><span class="price">{{ book.book.price }}</span></p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="pull-left">
+                        <a class="pull-right glyphicon glyphicon-remove re_car"
+                           href="/shopping_car_del/{{ book.pk }}">
+                            <span class=""></span>
+                        </a>
+                    </div>
+                </div>
+                <hr>
+
+            {% endfor %}
+        {% else %}
+            <div class="shopping">
+                <hr>
+                <h2>购物车书籍</h2>
+                <hr>
+                <div>
+                    <img style="width: 200px;display: table-cell;margin: 0 auto" src="/static/img/kong.jpg"/>
+                </div>
+                <p style="padding-top: 16px">购物车空空如也，赶紧充实一下自己吧</p>
+            </div>
+        {% endif %}
+
+
+
+        <div id="ship_car" class="foot col-md-6 col-md-offset-3 navbar navbar-default navbar-fixed-bottom">
+            <ul>
+                <li>
+                    <a href="/home/" class="home">
+                        <span class="glyphicon glyphicon-home"></span>
+                        <p>首页</p>
+                    </a>
+                </li>
+                <li>
+                    <div>
+                        <span>已选￥</span>
+                        <span class="price_count"></span>
+                        <span>元书籍</span>
+                    </div>
+                </li>
+                <li class="pull-right">
+                    <a  class="btn btn-warning car car_paly">
+                        结算
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+
+</body>
+<script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    var price_count = 0;
+    $('.shop_car').click(function () {
+        var click_color = $(this).children('div').children('span').css('color');
+        var this_id = $(this).attr('id');
+        var this_price = $('#'+this_id+' .price').html();
+
+        if(click_color==='rgb(220, 220, 220)'){
+            $(this).children('div').children('span').css('color','green');
+            price_count += Number(this_price);
+        }else {
+            $(this).children('div').children('span').css('color','gainsboro');
+            price_count -= Number(this_price);
+
+        }
+        $('#ship_car>ul>li>div').css('display','block');
+        $('.price_count').html(price_count);
+    });
+
+    $('.car_paly').click(function () {
+        var price_count = $('.price_count').text();
+        {#结算的书籍id#}
+        var book_list1 = new Array();
+        var divs = $('.cont>.shop_car');
+        for(var i =0 ; i<divs.length ; i++){
+            Vdiv = divs[i].getElementsByTagName('span')[0].style.color;
+            if(Vdiv === 'green'){
+                book_list1.push(divs[i].id);
+            }
+        }
+
+        $.ajax({
+            url:'',
+            method:'post',
+            data :{
+                'price_count':price_count,
+                'book_list':book_list1,
+                "csrfmiddlewaretoken": '{{ csrf_token }}',
+            },
+            success:function(data){
+                if(data.title==='ok'){
+                    location.href = '/home/'
+                }
+            }
+        })
+    })
+
+
+
+</script>
+</html>

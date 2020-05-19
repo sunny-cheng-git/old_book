@@ -1,0 +1,35 @@
+{% extends 'base_foot.html' %}
+{% block content %}
+    <div class="detail">
+        <div class="detail_img thumbnail">
+            <img src="/media/{{ book.img }}">
+        </div>
+        <div class="detail_content">
+            <h2>{{ book.title }}</h2>
+            <hr>
+            <p>价格：{{ book.price }}</p>
+            <p>品相：良好</p>
+            <p>作者：{{ book.author }}</p>
+            <p>出版社：{{ book.publish }}</p>
+        </div>
+        <div class="detail_score">
+            <hr>
+            <p>综合评分：＊＊＊＊＊</p>
+            <hr>
+        </div>
+        <div class="detail_brief">
+            <h2>图书简介</h2>
+            <hr>
+            <p>{{ book.brief }}</p>
+        </div>
+        <div>
+            <H2>评论</H2>
+
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
+

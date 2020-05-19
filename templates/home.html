@@ -1,0 +1,62 @@
+{% extends  'base_foot.html' %}
+{% block content %}
+    <div class="seach001">
+        <div class="seach">
+
+            <div class="search-input-button">
+                <span class="glyphicon glyphicon-search"></span>
+            </div>
+            <a href="/search/">
+                <input type="search" class="form-control" placeholder="搜索书籍" >
+            </a>
+            <div class="category_btn">
+                <a href="/category/">
+                    <span class="glyphicon glyphicon-tasks"></span>
+                    <p>分类</p>
+                </a>
+            </div>
+        </div>
+        <div class="recommend_cate clearfix">
+            <h2>就书推荐</h2>
+            <p>这里实现左右动态加载，未实现</p>
+            <hr>
+            <ul>
+                {% for cate in categories %}
+                    <li class="pull-left">{{ cate.title }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+            <hr>
+        <div>
+            <h2>书单</h2>
+            {% block book_list %}
+
+            {% endblock book_list %}
+
+        </div>
+
+    </div>
+
+
+
+    <script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8">
+
+    </script>
+    <script type="text/javascript">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+{% endblock %}

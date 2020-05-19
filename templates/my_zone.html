@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/old_book.css' %} "/>
+    <link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+    <style>
+        .zone > .avatar {
+            height: 200px;
+            background-image: url("/static/img/user_bgc.jpg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            padding: inherit;
+        }
+
+        .zone > .avatar > div {
+            color: #ffffff;
+            text-align: center;
+            line-height: 200px;
+            font-size: 30px;
+        }
+
+        .zone_title > ul > li {
+            list-style-type: none;
+            float: left;
+            width: 33%;
+            text-align: center;
+            border-left: 1px solid black;
+            cursor: pointer;
+        }
+        .zone>.btn-group-justified{
+            margin-bottom: 20px;
+        }
+        .zone_title > ul > li > a {
+            text-decoration: none;
+            font-size: 25px;
+        }
+        .order_detail>img{
+            width: 90px;
+            height: 128px;
+            box-shadow: 1px 0 4px 2px #888888;
+        }
+        .zone>.order_info{
+            padding: 5px;
+        }
+        .my_balance{
+            background-image: linear-gradient(-158deg, rgba(255, 255, 255, 0.11) 0%, rgba(201, 168, 115, 0.25) 99%);
+            text-align: center;
+            color: silver;
+        }
+        .my_balance>p:first-child{
+            padding-top: 50px;
+        }
+        .my_balance>.yue{
+            color: chocolate;
+            font-size: 30px;
+        }
+        .rack>.book-r>a>div>img{
+            width: 45px;
+            height: 64px;
+            box-shadow: 1px 0 4px 2px #888888;
+        }
+        .rack>.book-r>a>div>div>p{
+            margin: 0;
+            padding-left: 10px;
+            font-size: 12px;
+            color: #3c3c3c;
+        }
+        .score a,.rack>.book-r>a>div>div>.score a>span{
+            color: #18c3AA;
+            padding-top: 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="motai row">
+    <<div class="col-md-6 col-md-offset-3">
+        <div class="zone">
+            <div class="avatar">
+                <div>
+                    <a href="/home/" class="glyphicon glyphicon-home pull-right" style="padding-top: 15px;padding-right: 15px;color: white"></a>
+                    <a href="/logout/" class="glyphicon glyphicon-off pull-right" style="padding-top: 15px;padding-right: 15px;color: white"></a>
+                    <span>Hi,</span>
+                    <span>{{ request.user.username }}</span>
+                </div>
+            </div>
+
+            <div class="btn-group btn-group-justified" role="group" aria-label="Justified button group">
+                <a href="/my_balance/" class="btn btn-default" id="my_balance" role="button">余额</a>
+                <a href="/my_zone/" class="btn btn-default" id="my_zone" role="button">订单</a>
+                <a href="/my_bookrack/" class="btn btn-default" id="my_bookrack" role="button">书架</a>
+                <a href="/my_zone_info" class="btn btn-default" id="my_zone_info"role="button">通知</a>
+            </div>
+            {% block zone %}
+                <ul class="nav nav-tabs nav-justified" id="zone_active">
+                    <li role="presentation" class="active"><a href="/my_zone/">买书订单</a></li>
+                    <li role="presentation" ><a href="/my_zone/sell_books">卖书订单</a></li>
+                </ul>
+                <div id="myzone_book_list">
+                    {% for book in books %}
+                        <div class="clearfix book_title">
+                            <a href="/book_detail/{{book.pk}}" class="clearfix ">
+                                <div class="pull-left thumbnail">
+                                    <img src="media/{{book.img}}">
+                                </div>
+                                <div class="pull-left">
+                                    <p>书名：{{book.title}}</p>
+                                    <p>作者：{{book.author}}</p>
+
+                                </div>
+                            </a>
+                        </div>
+                        <hr>
+                    {% endfor %}
+
+
+                </div>
+
+
+                <div>
+                    {% for order in order_list %}
+                        <div class="order">
+                            <div>
+                                <p>买书订单：{{ order.order_numb }}</p>
+                            </div>
+                            <div>
+                                <p>{{ order.books | length}}个商品 {{ order.time | date:'Y-m-d' }}</p>
+                            </div>
+                            <div>
+                                {% for book in order.books %}
+                                    <a href="book_detail/{{ book.pk }}">
+                                        <img src="media/{{ book.img }}">
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/bs/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+
+    window.onload=function() {
+        url = location.href.split('/');
+        console.log(url[4]);
+        $('#'+url[3]).addClass('active');
+        if(url[4]==='sell_books'){
+            $('#zone_active>li:first-child').removeClass('active');
+            $('#zone_active>li:last-child').addClass('active');
+        }
+    }
+
+
+</script>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css/old_book.css' %} "/>
+    <link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+    <style>
+        body{
+            background-color: gainsboro;
+        }
+        .appraise>div>img{
+            width: 90px;
+            height: 128px;
+            box-shadow: 1px 0px 4px 2px #888888;
+        }
+        .appraise>div>h3{
+            text-align: center;
+        }
+        .appraise>.start>span{
+            font-size: 25px;
+        }
+        .appraise>.start{
+            color: silver;
+            cursor: pointer;
+        }
+        .appraise>.start>p{
+            color: #3e8f3e;
+            font-size: 15px;
+        }
+        .col-md-6{
+            background-color: snow;
+        }
+    </style>
+</head>
+<body>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="appraise" id="{{ book.sid }}">
+            <div>
+                <h3>给《{{ book.title }}》评分</h3>
+            </div>
+            <div class="text-center" style="padding-top: 20px">
+                <img src="/media/{{ book.img }}">
+            </div>
+            <div class="start text-center" style="padding-top: 20px">
+                <p>*请给书籍评分*</p>
+                <span sid="1" class="glyphicon glyphicon-star"></span>
+                <span sid="2" class="glyphicon glyphicon-star"></span>
+                <span sid="3" class="glyphicon glyphicon-star"></span>
+                <span sid="4" class="glyphicon glyphicon-star"></span>
+                <span sid="5" class="glyphicon glyphicon-star"></span>
+            </div>
+            <div class="text-center" style="padding-top: 20px;">
+                <textarea placeholder="一些阅读感受…" style="width: 400px;height: 100px"></textarea>
+                <button class="appraise_btn btn-warning" style="width: 400px;margin-top: 100px" type="button">发表评论</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    var hint={
+        1:'不要看',
+        2:'不好看',
+        3:'还可以',
+        4:'好看',
+        5:'非常好看'
+    };
+
+    $('.start>span').click(function () {
+        $('.appraise>.start>span').css('color','silver');
+        var star_numb = $(this).attr('sid');
+        $('.start>p').html(hint[star_numb]).attr('score',star_numb);
+        var i = 1;
+        while (i<Number(star_numb)+1){
+            $('span[sid="'+i+'"]').css('color','green');
+            i+=1;
+        }
+
+    });
+
+
+
+
+    $('.appraise_btn').click(function () {
+        if($('textarea').val()){
+            var text = $('textarea').val();
+            var book_id = $('.appraise').attr('id');
+            console.log(text,book_id);
+            var star_numb = $('.start>p').attr('score');
+            console.log(star_numb);
+            data = {
+                'appraise_text':text,
+                'book_id':book_id,
+                'star_numb':star_numb,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            };
+            $.ajax({
+                url:'',
+                type:'post',
+                data:data,
+                success:function(data){
+                    if(data.title){
+                        console.log(data.title);
+                        location.href = "/book_detail/"+book_id
+
+                    }else {
+                        console.log(data.msg)
+                    }
+                }
+            });
+        }else {
+            alert('不允许评价为空')
+        }
+    })
+</script>
+</html>
