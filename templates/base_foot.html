@@ -12,13 +12,9 @@
 <body>
 <div class="row">
     <div class="cont col-md-6 col-md-offset-3">
-
         {% block content %}
 
         {% endblock content %}
-
-
-
         <div class="foot col-md-6 col-md-offset-3 navbar navbar-default navbar-fixed-bottom">
             <ul>
                 <li>
@@ -59,13 +55,59 @@
 <script src="/static/bs/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+    var plate = function (pk,img,title,author,price) {
+      st = `<div class="clearfix book_title">
+            <a href="/book_detail/${ pk }" class="clearfix ">
+                <div class="pull-left thumbnail">
+                    <img src="media/${ img }">
+                </div>
+                <div class="pull-left">
+                    <p>${ title }</p>
+                    <p>${ author }</p>
+                    <p><span>¥&nbsp</span>${ price }</p>
+                </div>
+            </a>
+        </div>
+    `;
+        return st
+    };
+    {#动态加载书籍信息#}
+    var page_numb = 2;
+    $('.more_book').click(function () {
+        $.ajax({
+            url:'',
+            method:'post',
+            data:{
+                'page':page_numb,
+                "csrfmiddlewaretoken": '{{ csrf_token }}',
+            },
+            success:function (data) {
+                if(data.title){
+                    var book_list = JSON.parse(data.title);
+                    var index = 0;
+                    var elements = '';
+                    while (index<book_list.length) {
+                        obj = book_list[index].fields;
+                        elements+=plate(book_list[index].pk,obj.img,obj.title,obj.author,obj.price);
+                        index+=1
+                    }
+                    $('.book_list').append(elements)
+                }else {
+                    $('.more_book').text(data.msg)
+                }
 
+            }
+        });
+        page_numb+=1
+    });
+
+
+    {#首页书籍分类#}
     function get_bgc() {
         var bgcolor=[
             '#D24D57','#26A65B','#EB7347','#2C3E50','#84AF9B','#FC9D99','#AEDD81' ,'#00CCFF' ,'#D0D0D0'
         ];
         var num = Math.round(Math.random()*(bgcolor.length));
-
         return bgcolor[num]
     }
 
@@ -78,9 +120,12 @@
 
         {#底部栏添加active#}
         url = location.href.split('/');
-        {#console.log(url);#}
-        {#console.log(url[3]);#}
-        $('.'+url[3]).addClass('home_active');
+        if(!url[3]){
+            $(".home").addClass('home_active');
+        }else {
+            $("."+url[3]).addClass('home_active');
+
+        }
 
 
         {#书籍分类#}

@@ -80,11 +80,13 @@ a{
     color: white;
     padding: 10px;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .book_list>div>a>div>img{
     width: 80px;
     height: 120px;
+    font-size: 20px;
 }
 
 .book_list>.book_title{
@@ -158,9 +160,10 @@ a{
 .detail_score p{
     margin-left: 20px;
     color: #67b168;
-
 }
-
+.detail_score p>img {
+    width: 20px;
+}
 .home_active{
     color: #67b168;
 }
@@ -200,6 +203,15 @@ a{
     height: 120px;
 }
 
+.sell_books>.no_sell{
+    padding-top: 100px;
+    padding-left: 50px;
+}
+
+.not_click{
+    background-color: gainsboro;
+    pointer-events:none;
+}
 .sell_books>.book_sell_in>div>.first{
     display: block;
     border-right: 1px solid gainsboro;
@@ -324,3 +336,13 @@ a{
 .comment_reply>div>span{
     cursor: pointer;
 }
+.more_book {
+    text-align: center;
+    cursor: pointer;
+}
+
+.more_book img{
+    width: 20px;
+}
+
+

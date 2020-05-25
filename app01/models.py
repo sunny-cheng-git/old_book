@@ -30,7 +30,7 @@ class Book_detail(models.Model):
     sell_book = models.OneToOneField(Book,on_delete=models.CASCADE)
     status_choices = ((0, '正常销售'), (1, '已售罄'), (2, '已下架'), (3, '暂时无货'))
     status = models.SmallIntegerField(choices=status_choices, verbose_name="状态",default=0)
-    book_count = models.IntegerField(verbose_name='在售书籍数量',null=True) #这里默认应该是一本
+    book_count = models.IntegerField(verbose_name='在售书籍数量',null=True,default=1) #这里默认应该是一本
 
 
 

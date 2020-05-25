@@ -18,5 +18,15 @@ def star_numb(numb):
     return mark_safe(ret)
 
 
-
-
+#评分规则向下取整，再加半棵星
+@register.simple_tag
+def detail_star_numb(numb):
+    print(numb)
+    print(int(numb))
+    print(isinstance(numb,float))
+    ret = ''
+    for i in range(int(numb)):
+        ret+='<img src="/static/img/Star%20(Filled).png">'
+    if isinstance(numb,float):
+        ret+='<img src="/static/img/cc-star-half.png">'
+    return mark_safe(ret)

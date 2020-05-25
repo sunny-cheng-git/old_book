@@ -7,6 +7,7 @@ from app01.myforms import Sell_bookForm,UserForm,LoginForm
 from django.contrib import auth
 from django.db import transaction
 import json,datetime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def index(request):
@@ -15,11 +16,25 @@ def index(request):
     return render(request,'base_foot.html')
 
 def home(request):
+    response = {'title':None,"msg":None}
     categories = models.Category.objects.all()
-    books = models.Book.objects.all()
-    print(books)
-
-
+    book_list=models.Book.objects.all().order_by('sid')
+    paginator = Paginator(book_list, 5) #每页5条
+    if request.method == "POST": #动态记载返回数据
+        page = request.POST.get('page')
+        currentPage=int(page)
+        try:
+            print(page)
+            books = paginator.page(page)
+            books.has_next()
+            data = serializers.serialize("json", books)
+            response['title'] = data
+        except EmptyPage:
+            books = paginator.page(paginator.num_pages)
+            response['msg'] = '已经没有数据了'
+        return JsonResponse(response)
+    page = request.GET.get('page',1)
+    books = paginator.page(page)
     return render(request,'book_list.html',locals())
 
 
@@ -53,15 +68,9 @@ def category(request):
         cate_obj = models.Category.objects.filter(cid=cate_id).first()
         cate_list = cate_obj.book_set.all()
 
-
-
         response['title'] = json.loads(serializers.serialize('json', cate_list))
 
         return JsonResponse(response,safe=False)
-
-
-
-
 
 
     categories = models.Category.objects.all()
@@ -70,21 +79,21 @@ def category(request):
 def book_detail(request,id):
     if request.method == 'POST':
         parent_comt = request.POST.get('parent_comt')
-        print(parent_comt)
         comt_objs = models.Comment.objects.filter(parent_comment=parent_comt,book=id).all().values_list('content','create_time','user__username')
 
         return JsonResponse(list(comt_objs),safe=False)
-
-
-
-
-    print(id)
     book_obj = models.Book.objects.filter(sid=id).first()
     comment_list = models.Comment.objects.filter(book=book_obj)
     # 前端展示留言有多少条信息
         # 1.通过后端传过去
         # 2.前端如果没有留言 提示框5秒 关闭
-    return  render(request,'book_detail.html',{"book":book_obj,"comment_list":comment_list})
+    from django.db.models import Avg
+    book_score = models.Comment.objects.filter(book=id).aggregate(Avg('score'))#评分计算规则只算有打分的
+    print('book_score',book_score['score__avg'])
+    score = book_score['score__avg']
+    print(score)
+
+    return  render(request,'book_detail.html',{"book":book_obj,"comment_list":comment_list,'score':score})
 
 
 
@@ -105,7 +114,11 @@ def shop_car(request):
         #一个订单里面有多本书,一本书对应一个详情，并且事务回滚
             for i in car_list:
                 b_obj = models.Shopping_car.objects.filter(sid=i).first()
+                print(b_obj,type(b_obj),b_obj.book)
+                print(b_obj.book.book_detail,type(b_obj.book.book_detail))
                 models.OrderDetail.objects.create(order=order_obj,book=b_obj.book,original_price=0,price=0)
+                b_obj.book.book_detail.status = 1
+                b_obj.book.book_detail.save()
         #将购物车的数据清空
             for j in car_list:
                 models.Shopping_car.objects.filter(sid=j).delete()
@@ -167,10 +180,6 @@ def sell_book(request):
 def sell_in(request):
 
     books = models.Book.objects.filter(user=request.user).all()
-
-    print(books)
-
-
     return render(request,"sell_in.html",locals())
 
 def sell_in_del(request,id):
@@ -285,7 +294,12 @@ def my_zone(request):
             orderdetail_dic['time']=i.date
             book_list = []
             for j in detail_list:
-                book_list.append(j.book)
+                try:#测试的时候有删除一些数据  所以这里做了 异常捕获
+                    print(j.book)
+                    book_list.append(j.book)
+                except :
+                    continue
+
                 # orderdetail_dic['book_id']=j.book.pk
                 # orderdetail_dic['book_img'] = j.book.img
             orderdetail_dic['books']=book_list

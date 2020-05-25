@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app01.my-mddleware.LOGIN_middleware'
 ]
 
 ROOT_URLCONF = 'old_books.urls'
@@ -130,3 +131,6 @@ AUTH_USER_MODEL = "app01.UserInfo"
 
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 MEDIA_URL="/media/"
+
+
+WHILT_LIST = ['/login/','/home/',"/",'/register/']
