@@ -28,7 +28,13 @@
             </div>
             <div class="detail_score">
                 <hr>
-                <p>综合评分：＊＊＊＊＊</p>
+                {% if score %}
+                    <p>综合评分 : {% detail_star_numb score %}</p>
+                {% else %}
+                    <p>暂时没有人为这本书打分</p>
+                {% endif %}
+
+
                 <hr>
             </div>
             <div class="detail_brief">
@@ -74,9 +80,15 @@
                     </a>
                 </li>
                 <li class="pull-right">
-                    <a href="/shipping_car/{{ book.pk }}" class="btn btn-warning car">
-                        加入购物车
-                    </a>
+                    {% if book.book_detail.status == 1 %}
+                        <a class="not_click btn btn-warning car">
+                            暂时无货
+                        </a>
+                    {% else %}
+                        <a href="/shipping_car/{{ book.pk }}" class="btn btn-warning car">
+                            加入购物车
+                        </a>
+                    {% endif %}
                 </li>
             </ul>
         </div>

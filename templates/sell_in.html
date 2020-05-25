@@ -7,34 +7,41 @@
             <li role="presentation" class="active" ><a href="#">我的售中书籍({{ books.count }})</a></li>
         </ul>
         <div class="sell_books">
-            {% for book in books %}
-                <div class="clearfix book_sell_in" id="{{ book.pk }}">
-                    <div class="pull-left">
-
-
-                        <a href="/book_detail/{{ book.pk }}" class="clearfix first">
-                                <div class="pull-left thumbnail">
-                                    <img src="media/{{ book.img }}">
-                                </div>
-                                <div class="pull-left">
-                                    <p>书名 ：《{{ book.title }}》</p>
-                                    <p>价格 ：<span>¥&nbsp</span>{{ book.price }}</p>
-                                </div>
-                        </a>
-                    </div>
-                    <div class="pull-right edit_sell_book clearfix">
-                        <a  href="/sell_in_edit/{{ book.pk }}" class="edit btn btn-success"><span class="glyphicon glyphicon-pencil">&nbsp</span>编辑</a>
-                        <a id="{{ book.pk }}" class="delete btn btn-warning">
-                            <span class="glyphicon glyphicon-trash">&nbsp</span>删除
-                        </a>
-
-
-                    </div>
+            {% if not books%}
+                <div class="no_sell">
+                    <p>hey,{{ request.user }},您暂时没有任何在售书籍</p>
+                    <p>将闲置的书籍拿来出售吧</p>
                 </div>
-                <hr>
+            {% else %}
 
-            {% endfor %}
+                {% for book in books %}
+                    <div class="clearfix book_sell_in" id="{{ book.pk }}">
+                        <div class="pull-left">
 
+
+                            <a href="/book_detail/{{ book.pk }}" class="clearfix first">
+                                    <div class="pull-left thumbnail">
+                                        <img src="media/{{ book.img }}">
+                                    </div>
+                                    <div class="pull-left">
+                                        <p>书名 ：《{{ book.title }}》</p>
+                                        <p>价格 ：<span>¥&nbsp</span>{{ book.price }}</p>
+                                    </div>
+                            </a>
+                        </div>
+                        <div class="pull-right edit_sell_book clearfix">
+                            <a  href="/sell_in_edit/{{ book.pk }}" class="edit btn btn-success"><span class="glyphicon glyphicon-pencil">&nbsp</span>编辑</a>
+                            <a id="{{ book.pk }}" class="delete btn btn-warning">
+                                <span class="glyphicon glyphicon-trash">&nbsp</span>删除
+                            </a>
+
+
+                        </div>
+                    </div>
+                    <hr>
+
+                {% endfor %}`
+            {% endif %}
 
 
 
